@@ -1,0 +1,8 @@
+{
+"host"     : "localhost",
+"dbname"   : "myflaskdb",
+"user"     : "postgres",
+"password" : "prasanna",
+"port"     : "5432"
+}
+
