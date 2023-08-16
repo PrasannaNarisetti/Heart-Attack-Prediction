@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+
+  <main>
+    <div class="container">
+      <div class="contact-form"><br>
+        <h2>Contact Us</h2>
+        <form id="contactForm"><br><br><br>
+          <label for="name">Name:</label>
+          <input type="text" id="name" required><br><br>
+          <label for="email">Email:</label>
+          <input type="email" id="email" required><br><br>
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" required><br><br><br>
+          <label for="message">Message:</label>
+          <textarea id="message" rows="4" required></textarea><br><br>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+    <button onclick="window.location.href = '/';">Back to Home</button>
+
+
+  </main>
+
+  <script>
+    // JavaScript code for handling the form submission
+    const contactForm = document.getElementById('contactForm');
+
+    contactForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const message = document.getElementById('message').value;
+
+      // You need to implement the logic to send the form data to the server
+      // using AJAX or fetch, which will then handle sending the email
+      // to the website owner's email address. Alternatively, you can use
+      // third-party services like Formspree or SendGrid to handle the form submission.
+
+      // For this example, let's assume we are just logging the data to the console.
+      console.log('Name:', name);
+      console.log('Email:', email);
+      console.log('Phone Number:', phone);
+      console.log('Message:', message);
+
+      // Reset the form after submission
+      contactForm.reset();
+    });
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>

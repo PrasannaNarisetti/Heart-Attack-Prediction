@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+
+  <main>
+    <div class="container">
+      <div class="prediction-form">
+        <h2>Prediction Form</h2>
+        <form id="predictionForm">
+            <table>
+                <tr>
+                  <td><label for="age">Age:</label></td>
+                  <td><input type="number" id="age" required min="0"></td>
+                </tr>
+                <tr>
+                  <td><label for="sex">Sex (0=Male, 1=Female):</label></td>
+                  <td><input type="number" id="sex" required min="0" max="1"></td>
+                </tr>
+                <tr>
+                  <td><label for="cp">CP (0=typical angina, 1=atypical angina, 2=non-anginal pain, 3=asymptotic):</label></td>
+                  <td><input type="number" id="cp" required min="0"></td>
+                </tr>
+                <tr>
+                  <td><label for="trtbps">trtbps:</label></td>
+                  <td><input type="number" id="trtbps" required min="0"></td>
+                </tr>
+                <tr>
+                  <td><label for="chol">chol:</label></td>
+                  <td><input type="number" id="chol" required min="0"></td>
+                </tr>
+                <tr>
+                  <td><label for="fbs">Fasting Blood sugar (0, 1=>120mg/dl):</label></td>
+                  <td><input type="number" id="fbs" required min="0"></td>
+                </tr>
+                <tr>
+                  <td><label for="restecg">Resting ECG (0=normal, 1=having ST-T wave abnormality, 2=left ventricular hypertrophy):</label></td>
+                  <td><input type="number" id="restecg" required min="0"></td>
+                </tr>
+                <tr>
+                    <td><label for="thalachh">thalachh (maximum heart rate achieved):</label></td>
+                    <td><input type="number" id="thalachh" required min="0"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="exng">exng (exercise induced angina (1=yes; 0=no)):</label></td>
+                    <td><input type="number" id="exng" required min="0"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="oldpeak">oldpeak:</label></td>
+                    <td><input type="number" id="oldpeak" required min="0" step="0.01"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="slp">slp:</label></td>
+                    <td><input type="number" id="slp" required min="0"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="caa">caa:</label></td>
+                    <td><input type="number" id="caa" required min="0"></td>
+                  </tr>
+                  <tr>
+                    <td><label for="thall">thall:</label></td>
+                    <td><input type="number" id="thall" required min="0"></td>
+                  </tr>
+                </table>
+      
+                <button type="submit">Predict</button>
+        </form>
+        <div id="predictionResult"></div>
+      </div>
+    </div>
+    <button onclick="window.location.href = '/';">Back to Home</button>
+
+  </main>
+
+  <script>
+    // JavaScript code for handling the form submission
+    const predictionForm = document.getElementById('predictionForm');
+    const predictionResultDiv = document.getElementById('predictionResult');
+  
+    predictionForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+  
+      // Collect form data
+      const formData = new FormData(predictionForm);
+  
+      // Create an object to hold the form data
+      const formDataObject = {};
+      formData.forEach((value, key) => {
+        formDataObject[key] = value;
+      });
+  
+      // Convert specific fields to the correct data types
+      formDataObject.age = parseInt(formDataObject.age);
+      formDataObject.sex = parseInt(formDataObject.sex);
+      formDataObject.cp = parseInt(formDataObject.cp);
+      formDataObject.trtbps = parseInt(formDataObject.trtbps);
+      formDataObject.chol = parseInt(formDataObject.chol);
+      formDataObject.fbs = parseInt(formDataObject.fbs);
+      formDataObject.restecg = parseInt(formDataObject.restecg);
+      formDataObject.thalachh = parseInt(formDataObject.thalachh);
+      formDataObject.exng = parseInt(formDataObject.exng);
+      formDataObject.oldpeak = parseFloat(formDataObject.oldpeak);
+      formDataObject.slp = parseInt(formDataObject.slp);
+      formDataObject.caa = parseInt(formDataObject.caa);
+      formDataObject.thall = parseInt(formDataObject.thall);
+  
+      // Send form data as JSON to Flask for prediction
+      fetch('/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the content type to JSON
+        },
+        body: JSON.stringify(formDataObject), // Convert data to JSON
+      })
+        .then(response => response.json())
+        .then(predictionResult => {
+          console.log(predictionResult);
+          // Display the prediction result
+          const predictionText = predictionResult.prediction;
+          const probability = predictionResult.probability;
+  
+          // Update the HTML to display the prediction
+          predictionResultDiv.innerHTML = `
+            <h3>Prediction Result</h3>
+            <p>Prediction: ${predictionText}</p>
+            <p>Probability: ${probability}</p>
+          `;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Display an error message if something goes wrong
+          predictionResultDiv.innerHTML = `
+            <h3>Error</h3>
+            <p>An error occurred while processing the prediction.</p>
+          `;
+        });
+  
+      // Reset the form after submission
+      predictionForm.reset();
+    });
+  </script>
+   
+</body>
+</html>
