@@ -8,16 +8,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from psycopg2.extras import RealDictCursor
 # from flask_cors import CORS, cross_origin
-from datetime import date, timedelta
+from datetime import timedelta
 # from urllib3 import request
 import  socket
 
 app = Flask(__name__)
 
-date_today = date.today()
-date_time = datetime.datetime.now()
-d = datetime.datetime.strptime('2011-06-09', '%Y-%m-%d')
-my_datetime_utc = date_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
 
 # key = Fernet.generate_key()
 # f = Fernet(key)
@@ -35,75 +32,6 @@ cur = base.cursor()
 
 # Load the machine learning model using joblib
 model = joblib.load('C:/Users/ekodh/OneDrive/Desktop/Heart/modelpickle.pkl')
-
-
-# Route for updating statistics about reserved and vacant servers
-@app.route('/dashboard1', methods=['GET'])
-def server_piechart():
-    cursor.execute('SELECT * FROM asset WHERE reserved=%s AND status=%s', [True, True])
-    reserved_servers = len(cursor.fetchall())
-    
-    cursor.execute('SELECT * FROM asset WHERE reserved=%s AND status=%s', [False, False])
-    vacant_servers = len(cursor.fetchall())
-    
-    return jsonify({
-        "Message": "Updated Statistics",
-        "Status": "200 OK",
-        "reserved": reserved_servers,
-        "vacant": vacant_servers
-    })
-
-# Route for updating statistics about clusters
-@app.route('/dashboard2', methods=['GET'])
-def cluster_piechart():
-    cur.execute("""
-        SELECT cluster_id,
-               COUNT(CASE WHEN reserved='t' THEN 1 ELSE NULL END) AS reserved,
-               COUNT(CASE WHEN reserved='f' OR reserved IS NULL THEN 1 ELSE NULL END) AS vacant
-        FROM asset
-        GROUP BY cluster_id
-    """)
-    
-    cluster_stats = []
-    for row in cur.fetchall():
-        cluster_stats.append({
-            "cluster_id": row[0],
-            "reserved": row[1],
-            "vacant": row[2]
-        })
-    
-    cluster_stats.append({
-        "Message": "Updated Statistics",
-        "Status": "200 OK"
-    })
-    
-    return jsonify({"Dashboard": cluster_stats})
-
-# Route for updating statistics about asset locations
-@app.route('/dashboard3', methods=['GET'])
-def location_piechart():
-    cur.execute("""
-        SELECT asset_location,
-               COUNT(CASE WHEN reserved='True' AND status='True' THEN 1 ELSE NULL END) AS reserved,
-               COUNT(CASE WHEN reserved='false' AND status='false' OR reserved IS NULL THEN 1 ELSE NULL END) AS vacant
-        FROM asset
-        GROUP BY asset_location
-    """)
-    
-    location_stats = []
-    for row in cur.fetchall():
-        location_stats.append({
-            "Location": row[0],
-            "Reserved": row[1],
-            "Vacant": row[2]
-        })
-    
-    location_stats.append({
-        "Message": "Updated Statistics",
-        "Status": "200 OK"
-    })
-    
-    return jsonify({"Dashboard": location_stats})
 
 
 
